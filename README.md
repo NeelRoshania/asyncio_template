@@ -38,6 +38,8 @@ Implementation
 - [asycnio](https://docs.python.org/3/library/asyncio.html)
 - [Croutines and Tasks](https://docs.python.org/3/library/asyncio-task.html#coroutines)
 - [snakeviz](https://jiffyclub.github.io/snakeviz/)
+    - generate profile, `python -m cProfile -o program.prof my_program.py`
+    - interpret results `snakeviz program.prof`
 
 Others
 - [Diagnosing slow python code](https://www.youtube.com/watch?v=m_a0fN48Alw)
