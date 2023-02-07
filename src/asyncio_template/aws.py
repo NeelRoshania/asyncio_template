@@ -1,6 +1,6 @@
 import boto3
 
-from python_template import logger
+from asyncio_template import logger
 
 """
 Notes

@@ -1,6 +1,5 @@
-# python-template
-
-- Use this library to start your python projects
+# asyncio-template
+A template to handle asynchronous applications.
 
 ### References
 
@@ -33,3 +32,12 @@
         - `ssh -T git@github.com`. See [Github SSH Authentication](https://docs.github.com/en/authentication).
 2. Authentication troubleshooting
     - [Permission denied (publickey)](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+
+### References
+Implementation
+- [asycnio](https://docs.python.org/3/library/asyncio.html)
+- [Croutines and Tasks](https://docs.python.org/3/library/asyncio-task.html#coroutines)
+- [snakeviz](https://jiffyclub.github.io/snakeviz/)
+
+Others
+- [Diagnosing slow python code](https://www.youtube.com/watch?v=m_a0fN48Alw)
