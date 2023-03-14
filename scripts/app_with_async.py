@@ -1,9 +1,16 @@
 import time
 import asyncio
 import numpy as np
+import logging
+import logging.config
 
-from asyncio_template.async_funcs import single_sort_task, nested_sort_tasks
-from asyncio_template import logger
+from asyncio_template.async_funcs import non_compute_bound
+from asyncio_template.funcs import single_sort_task as sst
+from multiprocessing.dummy import Pool
+
+# setup
+logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
+LOGGER = logging.getLogger(__name__) # python_template
 
 """
 
@@ -39,54 +46,36 @@ from asyncio_template import logger
 
 """
 
-async def main_awaitforeach():
-     logger.info('-- app-started --')
+async def main_noncomputebound():
+     LOGGER.info('-- app-started --')
      start_time = time.perf_counter()
 
      values = np.random.randint(1000, size=int(5e3))
 
-     # define task
-     task1 = asyncio.create_task(
-                                   nested_sort_tasks(
-                                             'nested-task', 
-                                             [
-                                                  ['B', values],
-                                                  ['C', values],
-                                                  ['D', values],                                       
-                                             ]
-                                        )
-     ) # nested tasks
-     task2 = asyncio.create_task(single_sort_task('A', values)) # Task A
-     
-     # wait for both tasks to finish
-     await task1
-     await task2
-     
-     elapsed_time = time.perf_counter() - start_time
-     logger.info(f'-- app-completed in {elapsed_time:.2f}s --')
+     # schedule non-blocking calls *concurrently*
+     tasks = [asyncio.create_task(non_compute_bound(i[0], np.random.randint(1000, size=int(5e3)))) for i in enumerate(range(3))]
+     results = await asyncio.gather(*tasks)
 
-async def main_firsttofinish():
-     logger.info('-- app-started --')
+     elapsed_time = time.perf_counter() - start_time
+     LOGGER.info(f'-- app-completed in {elapsed_time:.2f}s --')
+
+def main_computebound():
+     LOGGER.info('-- app-started --')
      start_time = time.perf_counter()
 
-     values = np.random.randint(1000, size=int(5e3))
+     arrs = [[i[0], np.random.randint(1000, size=int(5e3))] for i in enumerate(range(3))]
+     task_ref = [i[0] for i in arrs]
+     arr = [i[1] for i in arrs]
 
-     # schedule two calls *concurrently*:
-     await asyncio.gather(
-                              nested_sort_tasks(
-                                        'nested-task', 
-                                        [
-                                             ['B', values],
-                                             ['C', values],
-                                             ['D', values],                                       
-                                        ]),
-                              single_sort_task('A', values)
-     )
-     
+     # use multiprocessing for compute bound tasks
+     with Pool() as pool:
+          results = pool.starmap(sst, zip(task_ref, arr))
+
      elapsed_time = time.perf_counter() - start_time
-     logger.info(f'-- app-completed in {elapsed_time:.2f}s --')
+     LOGGER.info(f'-- app-completed in {elapsed_time:.2f}s --')
 
 if __name__ == "__main__":
 
      # asyncio.run(main_awaitforeach())
-     asyncio.run(main_firsttofinish())  
+     # asyncio.run(main_noncomputebound()) 
+     main_computebound()

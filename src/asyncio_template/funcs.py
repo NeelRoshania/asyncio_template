@@ -1,7 +1,8 @@
 import random
 import time
+import logging
 
-from asyncio_template import logger
+LOGGER = logging.getLogger(__name__) # python_template
 
 def bubble_sort(arr: list) -> list:
     
@@ -55,19 +56,18 @@ def single_sort_task(task_ref:str, arr: list) -> dict:
 
     """
     start_time = time.time()
+    LOGGER.info(f'starting task: {task_ref}')
     
     sorted_array = bubble_sort(arr)
     
     end_time = time.time()
 
-    logger.info(
-        {
+    return {
             "task_description": f'{task_ref}',
             "start_time":get_timestamp(start_time),
             "end_time": get_timestamp(end_time),
             "elapsed_time": get_duration(start_time=start_time, end_time=end_time)
         }
-    )
 
     return sorted_array
 
@@ -85,11 +85,9 @@ def nested_sort_tasks(task_ref: str, arrs: list) -> None:
 
     end_time = time.time()
 
-    logger.info(
-        {
+    return {
             "task_description": task_ref,
             "start_time":get_timestamp(start_time),
             "end_time": get_timestamp(end_time),
             "elapsed_time": get_duration(start_time=start_time, end_time=end_time)
         }
-    )

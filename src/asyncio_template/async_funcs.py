@@ -1,9 +1,11 @@
+import asyncio
 import random
+import logging
 import time
 
-from asyncio_template import logger
+LOGGER = logging.getLogger(__name__) # python_template
 
-async def bubble_sort(arr: list) -> list:
+def bubble_sort(arr: list) -> list:
     
     """
         bubble sort implementation
@@ -48,34 +50,30 @@ def get_timestamp(eseconds:float) -> str:
 
     return time.strftime("%Y%M%d %X", time.gmtime(eseconds))
 
-async def single_sort_task(task_ref:str, arr: list) -> list:
+async def single_sort_task(task_ref:str, arr: list) -> dict:
 
     """
-        A single task
+        A single task - this is compute bound and will block the thread!
 
     """
     start_time = time.time()
+    LOGGER.info(f'starting task: {task_ref}')
     
-    # Pause here and come back to single_sort_task() when bubble_sort() is ready
-    sorted_array = await bubble_sort(arr)
+    sorted_array = await bubble_sort(arr) # this blocks because it is compute bound
     
     end_time = time.time()
 
-    logger.info(
-        {
-            "task_description": f'{task_ref}',
-            "start_time":get_timestamp(start_time),
-            "end_time": get_timestamp(end_time),
-            "elapsed_time": get_duration(start_time=start_time, end_time=end_time)
-        }
-    )
-
-    return sorted_array
+    return {
+        "task_description": f'{task_ref}',
+        "start_time":get_timestamp(start_time),
+        "end_time": get_timestamp(end_time),
+        "elapsed_time": get_duration(start_time=start_time, end_time=end_time)
+    }
 
 async def nested_sort_tasks(task_ref: str, arrs: list) -> None:
 
     """
-        Execute nested tasks
+        Execute nested tasks - this is compute bound and will block the thread!
 
     """
 
@@ -86,7 +84,7 @@ async def nested_sort_tasks(task_ref: str, arrs: list) -> None:
 
     end_time = time.time()
 
-    logger.info(
+    LOGGER.info(
         {
             "task_description": task_ref,
             "start_time":get_timestamp(start_time),
@@ -94,3 +92,23 @@ async def nested_sort_tasks(task_ref: str, arrs: list) -> None:
             "elapsed_time": get_duration(start_time=start_time, end_time=end_time)
         }
     )
+
+async def non_compute_bound(task_ref:str, arr: list) -> dict:
+
+    """
+        A single task
+
+    """
+    start_time = time.time()
+    LOGGER.info(f'starting task: {task_ref}')
+    
+    await asyncio.sleep(3)
+    
+    end_time = time.time()
+
+    return {
+        "task_description": f'{task_ref}',
+        "start_time":get_timestamp(start_time),
+        "end_time": get_timestamp(end_time),
+        "elapsed_time": get_duration(start_time=start_time, end_time=end_time)
+    }
