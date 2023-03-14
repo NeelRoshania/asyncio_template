@@ -80,10 +80,12 @@ def main_computebound():
      arr = [i[1] for i in arrs]
 
      # use multiprocessing for compute bound tasks - threadlocked with dummy
+     LOGGER.info('running tasks with multiprocessing.dummy.Pool')
      with Dpool() as pool:
           results = pool.starmap(sst, zip(task_ref, arr))
 
      # use multiprocessing for compute bound tasks
+     LOGGER.info('running tasks with multiprocessing.Pool')
      with Pool() as pool:
           results = pool.starmap(sst, zip(task_ref, arr))
 
