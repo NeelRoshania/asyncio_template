@@ -6,7 +6,8 @@ import logging.config
 
 from asyncio_template.async_funcs import non_compute_bound
 from asyncio_template.funcs import single_sort_task as sst
-from multiprocessing.dummy import Pool
+from multiprocessing.dummy import Pool as Dpool
+from multiprocessing import Pool
 
 # setup
 logging.config.fileConfig('conf/logging.conf', defaults={'fileHandlerLog': f'logs/{__name__}.log'})
@@ -60,12 +61,27 @@ async def main_noncomputebound():
      LOGGER.info(f'-- app-completed in {elapsed_time:.2f}s --')
 
 def main_computebound():
+
+     """
+
+          multiprocessing
+               - .dummy.Pool: 
+                    - https://stackoverflow.com/questions/26432411/multiprocessing-dummy-in-python-is-not-utilising-100-cpu
+                    - That means you're restricted by the Global Interpreter Lock (GIL), and only one thread can actually execute CPU-bound operations at a time. 
+                    - That's going to keep you from fully utilizing your CPUs. If you want get full parallelism across all available cores, you're going to need to address the pickling issue you're hitting with multiprocessing.Pool
+
+
+     """
      LOGGER.info('-- app-started --')
      start_time = time.perf_counter()
 
      arrs = [[i[0], np.random.randint(1000, size=int(5e3))] for i in enumerate(range(3))]
      task_ref = [i[0] for i in arrs]
      arr = [i[1] for i in arrs]
+
+     # use multiprocessing for compute bound tasks - threadlocked with dummy
+     with Dpool() as pool:
+          results = pool.starmap(sst, zip(task_ref, arr))
 
      # use multiprocessing for compute bound tasks
      with Pool() as pool:
