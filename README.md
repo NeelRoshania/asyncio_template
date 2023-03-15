@@ -1,5 +1,9 @@
-# asyncio-template
+# asyncio-multiprocessing-template
 A template to handle asynchronous applications.
+
+This template covers boiler plate for;
+- `asyncio`
+- `multiprocessing` 
 
 ### References
 
@@ -43,3 +47,6 @@ Implementation
 
 Others
 - [Diagnosing slow python code](https://www.youtube.com/watch?v=m_a0fN48Alw)
+- [multiprocessing](https://wiki.python.org/moin/GlobalInterpreterLock)
+- [GIL](https://wiki.python.org/moin/GlobalInterpreterLock)
+- [Event Loop](https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_in_executor)
