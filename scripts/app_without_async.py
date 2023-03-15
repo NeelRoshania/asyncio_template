@@ -27,14 +27,6 @@ def main():
      start_time = time.perf_counter()
 
      values = np.random.randint(1000, size=int(5e3))
-     # nested_sort_tasks(
-     #      'nested-task', 
-     #      [
-     #           ['B', values],
-     #           ['C', values],
-     #           ['D', values],                                       
-     #      ]
-     # ) # nested tasks
      
      tasks = [single_sort_task(i[0], np.random.randint(1000, size=int(5e3))) for i in enumerate(range(3))]
      

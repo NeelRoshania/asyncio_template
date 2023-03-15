@@ -48,6 +48,13 @@ LOGGER = logging.getLogger(__name__) # python_template
 """
 
 async def main_noncomputebound():
+
+     """
+
+          asyncio use case for non-blocking or non-compute bound operations
+
+          k
+     """
      LOGGER.info('-- app-started --')
      start_time = time.perf_counter()
 
